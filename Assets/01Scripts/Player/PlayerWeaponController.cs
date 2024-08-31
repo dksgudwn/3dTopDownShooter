@@ -24,6 +24,10 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
 
     private bool _isShooting, _weaponReady;
 
+    [Header("Event Channel")]
+    [SerializeField] private GameEventChannelSO _spawnEvents;
+    private BulletPayload _payload;
+
     public void Initialize(Player player)
     {
         _player = player;
@@ -38,6 +42,7 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
         }
 
         _weaponReady = true;
+        _payload = new BulletPayload();
     }
 
     private void HandleGrabStatusChange(bool isGrabWeapon)
@@ -56,7 +61,10 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
 
         WeaponChangeStartEvent?.Invoke(before, currentWeapon);
     }
-
+    private void Start()
+    {
+        HandleChangeWeaponSlot(0);
+    }
     private void Update()
     {
         if (_isShooting)
@@ -75,5 +83,39 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
     {
         if (_weaponReady == false || currentWeapon.CanShooting() == false) return;
         WeaponFireEvent?.Invoke();
+
+        currentWeapon.Shooting();
+        if (currentWeapon.weaponData.shootType == ShootType.Single)
+        {
+            _isShooting = false;
+        }
+
+        for (int i = 0; i < currentWeapon.weaponData.bulletPerShot; i++)
+        {
+            FireSingleBullet();
+        }
+    }
+
+    private void FireSingleBullet()
+    {
+        SetUpBulletPayload();
+
+        var evt = SpawnEvents.PlayerBulletCreate;
+        evt.position = currentWeapon.GunPoint.position;
+        evt.rotation = currentWeapon.GunPoint.rotation;
+        evt.payload = _payload;
+        _spawnEvents.RaiseEvent(evt);
+    }
+
+    private void SetUpBulletPayload()
+    {
+        var data = currentWeapon.weaponData;
+        Vector3 bulletDirection = _player.GetCompo<PlayerAim>().GetBulletDirection(currentWeapon.GunPoint);
+
+        _payload.mass = 20f / data.bulletSpeed;
+        _payload.shootingRange = data.shootingRange;
+        _payload.impactForce = data.impactForce;
+        _payload.damage = data.damage;
+        _payload.velocity = bulletDirection * data.bulletSpeed;
     }
 }

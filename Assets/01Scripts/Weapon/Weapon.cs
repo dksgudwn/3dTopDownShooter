@@ -19,5 +19,12 @@ public abstract class Weapon
         _nextShooTime = Time.time + 1 / weaponData.fireRate;
     }
 
+    public void AdjustRig(Transform leftTarget, Transform leftHint)
+    {
+        leftTarget.localPosition = weaponData.leftHandPositon;
+        leftTarget.localRotation = Quaternion.Euler(weaponData.leftHandRotation);
+        leftHint.localPosition = weaponData.leftHandHintPosition;
+    }
+
     public abstract bool CanShooting();
 }

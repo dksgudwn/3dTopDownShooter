@@ -45,4 +45,10 @@ public class PlayerAim : MonoBehaviour, IPlayerComponent
             _beforeLookDirection = lookDirection;
         }
     }
+
+    public Vector3 GetBulletDirection(Transform gunPointTrm)
+    {
+        Vector3 direction = (_aimTrm.position - gunPointTrm.position).normalized;
+        return direction;
+    }
 }

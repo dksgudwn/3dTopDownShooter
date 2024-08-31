@@ -1,10 +1,14 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerAnimator : MonoBehaviour, IPlayerComponent
 {
+    [SerializeField] private MultiAimConstraint _aimIK;
+    [SerializeField] private TwoBoneIKConstraint _twoBoneIK;
 
     private readonly int _xVelocityHash = Animator.StringToHash("xVelocity");
     private readonly int _zVelocityHash = Animator.StringToHash("zVelocity");
@@ -61,8 +65,25 @@ public class PlayerAnimator : MonoBehaviour, IPlayerComponent
         PlayGrabAnimation(next.weaponData.grabType, next.weaponData.EquipSpeed);
     }
 
-    public void ChangeWeaponAnimation() => WeaponGrabTriggerEvent?.Invoke();
+    public void ChangeWeaponAnimation()
+    {
+        WeaponGrabTriggerEvent?.Invoke();
+        AimWeightTween(1, 0.5f, 0.1f);
+        LeftHandWeightTween(1, 0.5f, 0.5f);
+    }
     public void GrabAnimationEnd() => GrabStatusChangeEvent?.Invoke(true);
+
+    public void AimWeightTween(float endValue, float time, float delay, Action OnComplete = null)
+    {
+        DOTween.To(() => _aimIK.weight, value => _aimIK.weight = value, endValue, time);
+    }
+
+    public void LeftHandWeightTween(float endValue, float time, float delay, Action OnComplete = null)
+    {
+        DOTween.To(() => _twoBoneIK.weight, value => _aimIK.weight = value, endValue, time)
+            .SetDelay(delay)
+            .OnComplete(() => OnComplete?.Invoke());
+    }
 
     private void HandleWeaponFireEvent()
     {

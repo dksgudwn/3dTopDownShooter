@@ -30,5 +30,6 @@ public class PlayerWeaponVisual : MonoBehaviour, IPlayerComponent
     private void HandleChangeWeaponTrigger()
     {
         _nextWeapon.ActiveGun(true);
+        _nextWeapon.AdjustRig(_leftHandTarget, _leftHandHint);
     }
 }

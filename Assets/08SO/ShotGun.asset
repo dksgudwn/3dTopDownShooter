@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 388ef145833c429459d27c5b857265ab, type: 3}
-  m_Name: Rifle
+  m_Name: ShotGun
   m_EditorClassIdentifier: 
-  gunTrmName: weap_rifle
-  recoilPower: 2
-  reloadSpeed: 1
+  gunTrmName: weap_shotgun
+  recoilPower: 5
+  reloadSpeed: 0.5
   EquipSpeed: 1.2
-  shootType: 1
-  fireRate: 10
-  camDistance: 8
-  spreadAmout: 2
-  maxSpreadAmout: 8
+  shootType: 0
+  fireRate: 1
+  camDistance: 5
+  spreadAmout: 10
+  maxSpreadAmout: 15
   spreadIncRate: 0.15
   spreadCooldown: 1.5
-  maxAmmo: 50
-  shootingRange: 32.5
+  maxAmmo: 6
+  shootingRange: 4
   bulletSpeed: 60
-  bulletPerShot: 1
-  impactForce: 30
-  damage: 2
-  animationLayer: 1
+  bulletPerShot: 5
+  impactForce: 90
+  damage: 5
+  animationLayer: 2
   grabType: 1
-  leftHandPositon: {x: 0.274, y: 0.076, z: 0.015}
-  leftHandRotation: {x: -30.509, y: -214.641, z: 53}
-  leftHandHintPosition: {x: -0.518, y: 0.936, z: -0.191}
+  leftHandPositon: {x: 0.232, y: 0.089, z: -0.02}
+  leftHandRotation: {x: -35.05, y: 153.758, z: 40.643}
+  leftHandHintPosition: {x: -0.518, y: 0.936, z: -0.089}

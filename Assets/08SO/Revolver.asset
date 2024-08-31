@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 388ef145833c429459d27c5b857265ab, type: 3}
-  m_Name: Pistol
+  m_Name: Revolver
   m_EditorClassIdentifier: 
-  gunTrmName: weap_pistol
-  recoilPower: 0
-  reloadSpeed: 2
+  gunTrmName: weap_revolver
+  recoilPower: 3
+  reloadSpeed: 1
   EquipSpeed: 2
-  shootType: 1
+  shootType: 0
   fireRate: 3
   camDistance: 6
-  spreadAmout: 0.5
-  maxSpreadAmout: 1.5
+  spreadAmout: 0.3
+  maxSpreadAmout: 0.5
   spreadIncRate: 0.15
   spreadCooldown: 1
-  maxAmmo: 15
-  shootingRange: 8
+  maxAmmo: 6
+  shootingRange: 5
   bulletSpeed: 60
   bulletPerShot: 1
-  impactForce: 4
+  impactForce: 10
   damage: 2
   animationLayer: 1
   grabType: 0
-  leftHandPositon: {x: 0.172, y: 0.159, z: -0.041}
-  leftHandRotation: {x: -29.332, y: 177.382, z: -354.668}
-  leftHandHintPosition: {x: -0.518, y: 0.936, z: 0.045}
+  leftHandPositon: {x: 0.237, y: 0.121, z: -0.034}
+  leftHandRotation: {x: -26.025, y: 121.695, z: 74.84}
+  leftHandHintPosition: {x: -0.5182769, y: 0.936, z: 0.019}
