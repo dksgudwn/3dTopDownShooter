@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField] private InputReaderSO _inputReader;
 
     private Dictionary<Type, IPlayerComponent> _components;
+
+    [SerializeField] PlayerManagerSO _playerManager;
     private void Awake()
     {
         _components = new Dictionary<Type, IPlayerComponent>();
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
         {
             compo.Initialize(this);
         }
+        _playerManager.SetPlayer(this);
     }
 
     public T GetCompo<T>() where T : class

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface EnemyComponent
+public interface IEnemyComponent
 {
     public void Initialize(Enemy enmey);
 }
