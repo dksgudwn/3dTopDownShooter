@@ -9,6 +9,8 @@ public class PlayerWeapon : Weapon
     public int reservedAmmo;
     public Transform BackUpGunTrm { get; private set; }
 
+    private int _toReloadBullet; // 몇발 재장전
+
     public override bool CanShooting()
     {
         bool isCoolTime = _nextShooTime > Time.time;
@@ -51,5 +53,24 @@ public class PlayerWeapon : Weapon
     {
         GunTrm.gameObject.SetActive(isActive);
         BackUpGunTrm.gameObject.SetActive(!isActive);
+    }
+
+    public override bool CanReload()
+    {
+        return reservedAmmo > 0 && bulletInMagazine < weaponData.maxAmmo;
+    }
+
+    public override void TryToRelloadBullet()
+    {
+        int requireCount = weaponData.maxAmmo - bulletInMagazine;
+        _toReloadBullet = Mathf.Min(requireCount, reservedAmmo);
+    }
+
+    public override void FillBullet()
+    {
+        if (_toReloadBullet <= 0) return;
+        reservedAmmo -= _toReloadBullet;
+        bulletInMagazine += _toReloadBullet;
+        _toReloadBullet = 0;
     }
 }

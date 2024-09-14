@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e03ab637f5ce024fba806b388ff8bc4, type: 3}
+  m_Name: BigPack
+  m_EditorClassIdentifier: 
+  boxType: 1
+  ammoList:
+  - {fileID: 11400000, guid: bf318a667dc593b468e83704182afeb9, type: 2}
+  - {fileID: 11400000, guid: 0e45003045f46314b89996dd90abfe63, type: 2}
+  - {fileID: 11400000, guid: 3db5cb766ba809748a983c28a04db4a0, type: 2}

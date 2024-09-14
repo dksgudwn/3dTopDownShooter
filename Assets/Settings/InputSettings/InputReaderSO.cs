@@ -14,6 +14,8 @@ public class InputReaderSO : ScriptableObject, Controls.IPlayerActions, IPlayerC
     public event Action<bool> RunEvent;
     public event Action<bool> FireEvent;
     public event Action<int> ChangeWeaponSlotEvent;
+    public event Action ReloadEvent;
+    public event Action InteractionEvent;
 
     private Controls _controls;
 
@@ -95,5 +97,17 @@ public class InputReaderSO : ScriptableObject, Controls.IPlayerActions, IPlayerC
     {
         if (context.performed)
             ChangeWeaponSlotEvent?.Invoke(2);
+    }
+
+    public void OnReload(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            ReloadEvent?.Invoke();
+    }
+
+    public void OnInteraction(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+            InteractionEvent?.Invoke();
     }
 }

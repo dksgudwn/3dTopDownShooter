@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
@@ -11,6 +12,7 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
     [HideInInspector] public PlayerWeapon currentWeapon;
     [SerializeField] private int _maxSlotAllowd = 2;
     public Transform GunPointTrm => currentWeapon.GunPoint;
+    [SerializeField] private PickUpWeapon _pickUpWeaponPrefab;
 
     [Header("WeaponHolder")]
     [SerializeField] private Transform _weaponHolderTrm;
@@ -26,14 +28,21 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
 
     [Header("Event Channel")]
     [SerializeField] private GameEventChannelSO _spawnEvents;
+    [SerializeField] private GameEventChannelSO _valueEvents;
     private BulletPayload _payload;
 
     public void Initialize(Player player)
     {
         _player = player;
-        _player.GetCompo<InputReaderSO>().FireEvent += HandleFireInputEvent;
-        _player.GetCompo<InputReaderSO>().ChangeWeaponSlotEvent += HandleChangeWeaponSlot;
-        _player.GetCompo<PlayerAnimator>().GrabStatusChangeEvent += HandleGrabStatusChange;
+
+        var inputCompo = _player.GetCompo<InputReaderSO>();
+        inputCompo.FireEvent += HandleFireInputEvent;
+        inputCompo.ChangeWeaponSlotEvent += HandleChangeWeaponSlot;
+        inputCompo.ReloadEvent += HandleReloadEvent;
+
+        var animCompo = _player.GetCompo<PlayerAnimator>();
+        animCompo.GrabStatusChangeEvent += HandleGrabStatusChange;
+        animCompo.ReloadStatusChangeEvent += HandleReloadStatusChange;
 
         foreach (PlayerWeapon weapon in _weaponSlots)
         {
@@ -45,9 +54,35 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
         _payload = new BulletPayload();
     }
 
+    private void HandleReloadStatusChange(bool isReloading)
+    {
+        if (currentWeapon == null) return;
+        _weaponReady = !isReloading;
+
+        if (!isReloading)
+        {
+            currentWeapon.FillBullet();
+        }
+    }
+
+    private void HandleReloadEvent()
+    {
+        if (_weaponReady && currentWeapon.CanReload())
+        {
+            ReloadEvent?.Invoke(currentWeapon.weaponData.reloadSpeed);
+            currentWeapon.TryToRelloadBullet();
+        }
+    }
+
     private void HandleGrabStatusChange(bool isGrabWeapon)
     {
         _weaponReady = isGrabWeapon;
+        if (_weaponReady)
+        {
+            var evt = ValueEvents.CamDistanceEvent;
+            evt.diatance = currentWeapon != null ? currentWeapon.weaponData.camDistance : 5f;
+            _valueEvents.RaiseEvent(evt);
+        }
     }
 
     private void HandleChangeWeaponSlot(int slotIndex)
@@ -116,6 +151,66 @@ public class PlayerWeaponController : MonoBehaviour, IPlayerComponent
         _payload.shootingRange = data.shootingRange;
         _payload.impactForce = data.impactForce;
         _payload.damage = data.damage;
-        _payload.velocity = bulletDirection * data.bulletSpeed;
+        _payload.velocity = currentWeapon.ApplySpread(bulletDirection) + bulletDirection * data.bulletSpeed;
+    }
+
+    public void PickUpAmmoPack(AmmoPackDataSO packDataSO)
+    {
+        foreach (var ammo in packDataSO.ammoList)
+        {
+            foreach (PlayerWeapon weapon in _weaponSlots)
+            {
+                if (weapon.weaponData == ammo.weaponType)
+                    weapon.reservedAmmo += ammo.GetRandomAmount();
+            }
+        }
+    }
+
+    public void PickUpWeapon(PickUpWeapon pickUpWeapon)
+    {
+        PlayerWeapon hasWeapon = GetWeaponInSlots(pickUpWeapon.WeaponData);
+        if ((hasWeapon != null)) // 이미 가지고 있는 무기 
+        {
+            hasWeapon.reservedAmmo += pickUpWeapon.ReserveAmmo;
+            return;
+        }
+        if (_weaponSlots.Count >= _maxSlotAllowd)
+        {
+            int index = _weaponSlots.IndexOf(currentWeapon);
+            int newIndex = AddWeapon(pickUpWeapon);
+
+            (_weaponSlots[index], _weaponSlots[newIndex]) = (_weaponSlots[newIndex], _weaponSlots[index]);
+
+            DropWeapon(index);
+            return;
+        }
+        AddWeapon(pickUpWeapon);
+    }
+
+    private void DropWeapon(int nextEquipIndex)
+    {
+        if (_weaponSlots.Count <= 1) return;
+        PickUpWeapon dropWeapon = Instantiate(_pickUpWeaponPrefab);
+        dropWeapon.transform.position = transform.position;
+        dropWeapon.SetUpWeaponData(currentWeapon);
+
+        _weaponSlots.Remove(currentWeapon);
+        HandleChangeWeaponSlot(nextEquipIndex);
+    }
+
+    private int AddWeapon(PickUpWeapon pickUpWeapon)
+    {
+        PlayerWeapon newWeapon = new PlayerWeapon() { weaponData = pickUpWeapon.WeaponData };
+        newWeapon.SetUpGun(_weaponHolderTrm, _backHolderTrm, _sideHolderTrm);
+        _weaponSlots.Add(newWeapon);
+
+        newWeapon.bulletInMagazine = pickUpWeapon.AmmoInMagazine;
+        newWeapon.reservedAmmo = pickUpWeapon.ReserveAmmo;
+        return _weaponSlots.Count - 1;
+    }
+
+    private PlayerWeapon GetWeaponInSlots(WeaponDataSO weaponData)
+    {
+        return _weaponSlots.FirstOrDefault(w => w.weaponData == weaponData);
     }
 }

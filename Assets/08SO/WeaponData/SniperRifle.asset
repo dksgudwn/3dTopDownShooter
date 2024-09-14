@@ -31,6 +31,6 @@ MonoBehaviour:
   damage: 20
   animationLayer: 3
   grabType: 1
-  leftHandPositon: {x: 0.3803, y: 0.89, z: 0.0123}
-  leftHandRotation: {x: -157.656, y: -15.573, z: -126.843}
-  leftHandHintPosition: {x: -0.518, y: 0.936, z: 0.041}
+  leftHandPositon: {x: 0.344, y: 0.061, z: -0.005}
+  leftHandRotation: {x: -28.78, y: 176.384, z: -31.666}
+  leftHandHintPosition: {x: -0.518, y: 0.936, z: -0.022}

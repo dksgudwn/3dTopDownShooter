@@ -17,6 +17,9 @@ public class PlayerAnimator : MonoBehaviour, IPlayerComponent
     private readonly int _grabTypeHash = Animator.StringToHash("weaponGrabType");
     private readonly int _grabTriggerHash = Animator.StringToHash("weaponGrab");
     private readonly int _equipSpeedHash = Animator.StringToHash("equipSpeed");
+    private readonly int _reloadTriggerHash = Animator.StringToHash("reload");
+    private readonly int _reloadSpeedHash = Animator.StringToHash("reloadSpeed");
+
 
     private Animator _animator;
     private Player _player;
@@ -27,6 +30,7 @@ public class PlayerAnimator : MonoBehaviour, IPlayerComponent
 
     public event Action<bool> GrabStatusChangeEvent; // 무기 집기 상태 알림
     public event Action WeaponGrabTriggerEvent; // 백업 집는 순간
+    public event Action<bool> ReloadStatusChangeEvent;
 
     public void Initialize(Player player)
     {
@@ -39,6 +43,24 @@ public class PlayerAnimator : MonoBehaviour, IPlayerComponent
         _weaponController = _player.GetCompo<PlayerWeaponController>();
         _weaponController.WeaponFireEvent += HandleWeaponFireEvent;
         _weaponController.WeaponChangeStartEvent += HandleWeaponChangeStart;
+        _weaponController.ReloadEvent += HandleWeaponReloadStart;
+    }
+
+    private void HandleWeaponReloadStart(float reloadSpeed)
+    {
+        AimWeightTween(0, 0.2f, 0); // 왼손오른손 리그 해제
+        LeftHandWeightTween(0, 0.2f, 0);
+        ReloadStatusChangeEvent?.Invoke(true);
+
+        _animator.SetFloat(_reloadSpeedHash, reloadSpeed);
+        _animator.SetTrigger(_reloadTriggerHash);
+    }
+
+    private void ReloadAnimationEnd()
+    {
+        AimWeightTween(1, 0.2f, 0); // 왼손오른손 리그 해제
+        LeftHandWeightTween(1, 0.2f, 0);
+        ReloadStatusChangeEvent?.Invoke(false);
     }
 
     private void SwitchAnimationLayer(int layerIndex)

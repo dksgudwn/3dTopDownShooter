@@ -89,6 +89,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""aa5e6bf0-4cb4-476b-884e-a1e0b5c3d872"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interaction"",
+                    ""type"": ""Button"",
+                    ""id"": ""b3ccb666-210b-4890-9e01-cfae9bbf8722"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +230,28 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""EquitSlot3"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51a89ccb-6975-4f51-90fd-6337a67e0bd5"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51243ae5-adfa-4f69-a246-f72072802e83"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interaction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -244,6 +284,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_EquitSlot1 = m_Player.FindAction("EquitSlot1", throwIfNotFound: true);
         m_Player_EquitSlot2 = m_Player.FindAction("EquitSlot2", throwIfNotFound: true);
         m_Player_EquitSlot3 = m_Player.FindAction("EquitSlot3", throwIfNotFound: true);
+        m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
+        m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -312,6 +354,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_EquitSlot1;
     private readonly InputAction m_Player_EquitSlot2;
     private readonly InputAction m_Player_EquitSlot3;
+    private readonly InputAction m_Player_Reload;
+    private readonly InputAction m_Player_Interaction;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -323,6 +367,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @EquitSlot1 => m_Wrapper.m_Player_EquitSlot1;
         public InputAction @EquitSlot2 => m_Wrapper.m_Player_EquitSlot2;
         public InputAction @EquitSlot3 => m_Wrapper.m_Player_EquitSlot3;
+        public InputAction @Reload => m_Wrapper.m_Player_Reload;
+        public InputAction @Interaction => m_Wrapper.m_Player_Interaction;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -353,6 +399,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @EquitSlot3.started += instance.OnEquitSlot3;
             @EquitSlot3.performed += instance.OnEquitSlot3;
             @EquitSlot3.canceled += instance.OnEquitSlot3;
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
+            @Interaction.started += instance.OnInteraction;
+            @Interaction.performed += instance.OnInteraction;
+            @Interaction.canceled += instance.OnInteraction;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -378,6 +430,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @EquitSlot3.started -= instance.OnEquitSlot3;
             @EquitSlot3.performed -= instance.OnEquitSlot3;
             @EquitSlot3.canceled -= instance.OnEquitSlot3;
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
+            @Interaction.started -= instance.OnInteraction;
+            @Interaction.performed -= instance.OnInteraction;
+            @Interaction.canceled -= instance.OnInteraction;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -413,5 +471,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnEquitSlot1(InputAction.CallbackContext context);
         void OnEquitSlot2(InputAction.CallbackContext context);
         void OnEquitSlot3(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
+        void OnInteraction(InputAction.CallbackContext context);
     }
 }
